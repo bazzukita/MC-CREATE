@@ -1,0 +1,46 @@
+# Python cache
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.egg-info/
+.eggs/
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Java Runtime (demasiado pesado para git)
+jre/
+
+# Servidores creados por la app
+servers/
+
+# Estado de ejecución (generado en tiempo real)
+running.json
+
+# Logs de debug
+mc_create_error.log
+*.log
+
+# Archivos del sistema
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# IDEs
+.vscode/
+.idea/
+*.code-workspace
+# Configuración de herramientas e IA
+.claude/
+
+# Temporales de Python y compilación
+__pycache__/
+build/
+
+# Datos locales y servidores de prueba
+servers/
+servers.json
+
