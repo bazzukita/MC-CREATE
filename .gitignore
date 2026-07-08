@@ -18,6 +18,7 @@ env/
 
 # Java Runtime (demasiado pesado para git)
 jre/
+jre-backup*/
 
 # Servidores creados por la app
 servers/
