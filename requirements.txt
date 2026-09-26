@@ -1,2 +1,4 @@
-customtkinter>=5.2.0
-requests>=2.31.0
+customtkinter==5.2.2
+pynput==1.7.6
+CTkMessagebox==3.6.8
+pyinstaller==6.1.0

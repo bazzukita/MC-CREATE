@@ -1,0 +1,124 @@
+╔═══════════════════════════════════════════════════════════════════════════╗
+║                    🏀 MACRO BASKETBALL LEGENDS                             ║
+║                 🎮 Y MACRO GENERAL DE TECLADO - INSTRUCCIONES              ║
+╚═══════════════════════════════════════════════════════════════════════════╝
+
+📋 CONTENIDO:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+1. basketball_macro_gui.py       → Macro especializada para Basketball Legends
+2. keyboard_macro_gui.py         → Macro general para cualquier tecla
+3. compilar_exe.bat              → Script para compilar a .exe
+4. requirements.txt              → Dependencias necesarias
+
+🚀 OPCIÓN 1: EJECUTAR DIRECTAMENTE (Python)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Paso 1: Abre PowerShell en esta carpeta
+
+Paso 2: Instala las dependencias:
+   pip install -r requirements.txt
+
+Paso 3: Ejecuta una de las macros:
+
+   Para Basketball Legends:
+   python basketball_macro_gui.py
+
+   Para Macro General:
+   python keyboard_macro_gui.py
+
+✅ OPCIÓN 2: COMPILAR A EXE (Recomendado)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Paso 1: Haz doble click en: compilar_exe.bat
+
+Paso 2: Espera a que se complete la compilación (2-3 minutos)
+
+Paso 3: Los archivos .exe estarán en: ./dist/
+   - Basketball_Legends_Macro.exe
+   - Keyboard_Macro.exe
+
+Paso 4: Puedes mover estos .exe a donde quieras y ejecutarlos sin necesidad
+        de Python instalado.
+
+🎮 CÓMO USAR LA MACRO DE BASKETBALL LEGENDS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+CONFIGURACIÓN:
+
+1. Modo de juego:
+   • "Timing perfecto" → Presiona Espacio en el momento correcto
+     (Ajusta el intervalo según tu conexión)
+   • "Auto Click" → Clicks automáticos continuos
+     (Ajusta los CPS según lo que funcione mejor)
+
+2. Intervalo entre clicks:
+   • 300-400ms → Para conexiones buenas / lag bajo
+   • 400-600ms → Para lag medio
+   • 600-800ms → Para lag alto o conexión lenta
+
+3. CPS (Clicks por segundo):
+   • 8-10 CPS → Estándar
+   • 10-15 CPS → Si tienes conexión rápida
+   • 5-8 CPS → Si hay lag
+
+4. Botón del ratón activador:
+   • Click Izquierdo, Derecho o Rueda Central
+
+CÓMO JUGAR:
+
+1. Abre Basketball Legends
+2. Inicia la macro
+3. Posiciónate en la pantalla del juego
+4. Presiona el botón del ratón configurado mientras el ring cambia de color
+5. La macro hará los clicks perfectos automáticamente
+6. Presiona ESC en cualquier momento para detener
+
+💡 TIPS PARA PERFECTOS CONSISTENTES:
+
+• Ajusta el timing según tu lag y conexión
+• Si fallas muchos, aumenta el intervalo (más lento)
+• Si no activa a tiempo, reduce el intervalo (más rápido)
+• En auto-click, empieza con 8 CPS y ajusta según resultados
+• Prueba en tiros libres primero para calibrar
+
+⌨️ CÓMO USAR LA MACRO GENERAL DE TECLADO
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+1. Selecciona la tecla a pulsar (W, A, S, D, Space, etc.)
+2. Elige el botón del ratón que la activa
+3. Selecciona el modo:
+   • "Mientras mantengo el botón" → La tecla se pulsa mientras lo sostienes
+   • "Pulsaciones de X segundos" → Pulsa la tecla durante X segundos
+4. Inicia la macro
+5. Presiona el botón del ratón en el juego
+
+🔧 SOLUCIÓN DE PROBLEMAS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+❌ "ModuleNotFoundError: No module named 'customtkinter'"
+   → Ejecuta: pip install -r requirements.txt
+
+❌ La macro no responde al click del ratón
+   → Asegúrate de que Roblox está en primer plano
+   → Presiona ESC y reinicia la macro
+
+❌ Los clicks llegan muy rápido o muy lento
+   → Ajusta el intervalo entre clicks
+   → Prueba reduciendo/aumentando 100ms a la vez
+
+❌ No se puede compilar a .exe
+   → Asegúrate de tener Python 3.9+ instalado
+   → Ejecuta como administrador: compilar_exe.bat
+
+⚠️ IMPORTANTE
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+• Esta macro es solo para práctica y jugar de forma más cómoda
+• Úsala en juegos permitidos (no juegos competitivos o multijugador oficial)
+• No es responsabilidad del autor cualquier ban o sanción en el juego
+• Presiona ESC siempre para detener la macro cuando termines
+
+╔═══════════════════════════════════════════════════════════════════════════╗
+║                        ¡Listo para jugar! 🏀                              ║
+╚═══════════════════════════════════════════════════════════════════════════╝
