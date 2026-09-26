@@ -160,19 +160,19 @@ class ServerManager:
             resp = requests.get(MOJANG_MANIFEST, timeout=10)
             resp.raise_for_status()
             releases = [v for v in resp.json()["versions"] if v["type"] == "release"]
-            return [{"id": v["id"], "url": v["url"]} for v in releases[:40]]
+            return [{"id": v["id"], "url": v["url"]} for v in releases]
 
         elif server_type == "paper":
             resp = requests.get(PAPER_API, timeout=10)
             resp.raise_for_status()
             versions = list(reversed(resp.json()["versions"]))
-            return [{"id": v, "url": None} for v in versions[:40]]
+            return [{"id": v, "url": None} for v in versions[:100]]
 
         elif server_type == "fabric":
             resp = requests.get(f"{FABRIC_META}/versions/game", timeout=10)
             resp.raise_for_status()
             stable = [v["version"] for v in resp.json() if v.get("stable", False)]
-            return [{"id": v, "url": None} for v in stable[:40]]
+            return [{"id": v, "url": None} for v in stable[:100]]
 
         elif server_type == "forge":
             resp = requests.get(FORGE_PROMOTIONS, timeout=15)
@@ -183,7 +183,13 @@ class ServerManager:
                 key=lambda v: [int(x) if x.isdigit() else 0 for x in v.split(".")],
                 reverse=True,
             )
-            return [{"id": v, "url": None} for v in mc_versions[:30]]
+            # Filtrar versiones >= 1.8
+            def version_key(v):
+                parts = [int(x) if x.isdigit() else 0 for x in v.split(".")]
+                return parts
+
+            filtered = [v for v in mc_versions if version_key(v) >= [1, 8]]
+            return [{"id": v, "url": None} for v in filtered]
 
         return []
 
