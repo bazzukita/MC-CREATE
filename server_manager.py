@@ -36,6 +36,54 @@ ADOPTIUM_ASSET_URL = (
 )
 CLASS_FILE_TO_JAVA = {str(44 + i): i for i in range(1, 30)}
 
+# Mapeo de versión de Minecraft a versión de Java requerida
+MC_VERSION_TO_JAVA = {
+    # 1.12.2 y anteriores: Java 8
+    "1.12.2": 8,
+    "1.12.1": 8,
+    "1.12": 8,
+    "1.11.2": 8,
+    # 1.13 - 1.16.5: Java 11
+    "1.13": 11,
+    "1.14": 11,
+    "1.15": 11,
+    "1.16": 11,
+    "1.16.1": 11,
+    "1.16.2": 11,
+    "1.16.3": 11,
+    "1.16.4": 11,
+    "1.16.5": 11,
+    # 1.17 - 1.20.1: Java 17
+    "1.17": 17,
+    "1.17.1": 17,
+    "1.18": 17,
+    "1.18.1": 17,
+    "1.18.2": 17,
+    "1.19": 17,
+    "1.19.1": 17,
+    "1.19.2": 17,
+    "1.19.3": 17,
+    "1.19.4": 17,
+    "1.20": 17,
+    "1.20.1": 17,
+    # 1.21+: Java 21
+    "1.21": 21,
+    "1.21.1": 21,
+}
+
+def get_java_version_for_mc(mc_version: str) -> int:
+    """Retorna la versión de Java requerida para una versión de Minecraft."""
+    if mc_version in MC_VERSION_TO_JAVA:
+        return MC_VERSION_TO_JAVA[mc_version]
+
+    # Intenta hacer matching aproximado (ej: "1.12.3" → "1.12")
+    for major_version, java_version in MC_VERSION_TO_JAVA.items():
+        if mc_version.startswith(major_version.rsplit(".", 1)[0]):
+            return java_version
+
+    # Default: Java 21 para versiones nuevas
+    return 21
+
 # Solo letras, números, espacios, puntos, guiones y guiones bajos
 _SAFE_NAME_RE = re.compile(r"^[A-Za-z0-9 ._\-]{1,64}$")
 
@@ -393,7 +441,19 @@ class ServerManager:
         server_type = config.get("server_type", "vanilla")
         jar_name = config.get("jar_name", "server.jar")
         forge_win_args = config.get("forge_win_args")
-        java_exe = self._find_java()
+
+        # Detectar versión de Java requerida según versión de Minecraft
+        mc_version = config.get("version", "1.21")
+        required_java = get_java_version_for_mc(mc_version)
+
+        # Intentar usar Java del sistema, si no está disponible, descargar
+        try:
+            java_exe = self._find_java(required_java)
+        except JavaNotFoundError:
+            if output_cb:
+                output_cb(f"Java {required_java} no encontrado. Descargando...\n")
+            self.download_java(output_cb, version=required_java)
+            java_exe = self._find_java(required_java)
 
         port = config.get("port", 25565)
         props = Path(config["path"]) / "server.properties"
@@ -849,33 +909,48 @@ class ServerManager:
 
     # ── Java detection ────────────────────────────────────────────────────────
 
-    def check_java(self):
-        java_exe = self._find_java()
-        self._check_java_version(java_exe)
+    def check_java(self, required_version=None):
+        java_exe = self._find_java(required_version)
+        self._check_java_version(java_exe, required_version)
         return java_exe
 
-    def java_is_ready(self):
+    def java_is_ready(self, required_version=None):
         try:
-            self.check_java()
+            self.check_java(required_version)
             return True
         except (JavaNotFoundError, JavaVersionError):
             return False
 
     @staticmethod
-    def _find_java():
+    def _find_java(required_version=None):
+        # Buscar primero en JRE_DIR local
         if JRE_DIR.exists():
             local = sorted(JRE_DIR.rglob("java.exe"), key=lambda p: str(p), reverse=True)
             if local:
-                return str(local[0])
+                java_exe = str(local[0])
+                try:
+                    actual_version = ServerManager._get_java_version(java_exe)
+                    if required_version is None or actual_version == required_version:
+                        return java_exe
+                except:
+                    pass
 
+        # Intentar comandos globales
         for candidate in ["java", "javaw"]:
             try:
                 result = subprocess.run([candidate, "-version"], capture_output=True, timeout=5)
                 if result.returncode == 0 or result.stderr:
-                    return candidate
+                    try:
+                        actual_version = ServerManager._get_java_version(candidate)
+                        if required_version is None or actual_version == required_version:
+                            return candidate
+                    except:
+                        if required_version is None:
+                            return candidate
             except FileNotFoundError:
                 continue
 
+        # Buscar en rutas conocidas
         search_roots = [
             Path("C:/Program Files/Eclipse Adoptium"),
             Path("C:/Program Files/Java"),
@@ -891,12 +966,22 @@ class ServerManager:
 
         if candidates:
             candidates.sort(key=lambda p: str(p), reverse=True)
-            return str(candidates[0])
+            for java_exe in candidates:
+                try:
+                    actual_version = ServerManager._get_java_version(str(java_exe))
+                    if required_version is None or actual_version == required_version:
+                        return str(java_exe)
+                except:
+                    continue
+            # Si no encontramos la versión exacta, devolver la primera
+            if required_version is None:
+                return str(candidates[0])
 
-        raise JavaNotFoundError("Java no encontrado.")
+        raise JavaNotFoundError(f"Java no encontrado{f' versión {required_version}' if required_version else ''}.")
 
     @staticmethod
-    def _check_java_version(java_exe):
+    def _get_java_version(java_exe):
+        """Extrae la versión principal de Java."""
         result = subprocess.run([java_exe, "-version"], capture_output=True, text=True, timeout=5)
         output = result.stderr or result.stdout
         m = re.search(r'version "(\d+)', output)
@@ -905,9 +990,23 @@ class ServerManager:
             if major == 1:
                 m2 = re.search(r'version "1\.(\d+)', output)
                 major = int(m2.group(1)) if m2 else major
-            if major < 17:
+            return major
+        raise JavaVersionError(f"No se pudo detectar la versión de {java_exe}")
+
+    @staticmethod
+    def _check_java_version(java_exe, required_version=None):
+        actual_version = ServerManager._get_java_version(java_exe)
+
+        if required_version is not None:
+            if actual_version != required_version:
                 raise JavaVersionError(
-                    f"Java {major} detectado. Se necesita Java 17 o superior."
+                    f"Java {actual_version} detectado. Se necesita Java {required_version}."
+                )
+        else:
+            # Default check: Java 17+
+            if actual_version < 17:
+                raise JavaVersionError(
+                    f"Java {actual_version} detectado. Se necesita Java 17 o superior."
                 )
 
     # ── Java auto-download ────────────────────────────────────────────────────
