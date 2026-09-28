@@ -70,7 +70,7 @@ class InfoCard(ctk.CTkFrame):
 class MCCreateApp(ctk.CTk):
     def __init__(self):
         super().__init__()
-        self.title("MC Create")
+        self.title("MC Create v1.3")
         self.geometry("1150x720")
         self.minsize(960, 600)
 
@@ -104,7 +104,7 @@ class MCCreateApp(ctk.CTk):
 
         logo_frame = ctk.CTkFrame(sidebar, fg_color=("#1a6b2e", "#1a6b2e"), corner_radius=0)
         logo_frame.grid(row=0, column=0, sticky="ew")
-        ctk.CTkLabel(logo_frame, text="⛏  MC Create",
+        ctk.CTkLabel(logo_frame, text="⛏  MC Create v1.3",
                      font=ctk.CTkFont(size=18, weight="bold"),
                      text_color="white").pack(pady=18, padx=20)
 
