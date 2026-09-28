@@ -923,9 +923,22 @@ class ServerManager:
 
     @staticmethod
     def _find_java(required_version=None):
-        # Buscar primero en JRE_DIR local
+        # Buscar en subdirectorio específico de versión (jre/java-8/, jre/java-21/, etc.)
+        if required_version and JRE_DIR.exists():
+            version_dir = JRE_DIR / f"java-{required_version}"
+            if version_dir.exists():
+                local = sorted(version_dir.rglob("java.exe"), key=lambda p: str(p), reverse=True)
+                if local:
+                    return str(local[0])
+
+        # Buscar en JRE_DIR raíz (compatibilidad con instalación anterior)
         if JRE_DIR.exists():
-            local = sorted(JRE_DIR.rglob("java.exe"), key=lambda p: str(p), reverse=True)
+            local = sorted(
+                [p for p in JRE_DIR.rglob("java.exe") if "java-" not in str(p.relative_to(JRE_DIR)).split("\\")[0] and "java-" not in str(p.relative_to(JRE_DIR)).split("/")[0]],
+                key=lambda p: str(p), reverse=True,
+            )
+            if not local:
+                local = sorted(JRE_DIR.rglob("java.exe"), key=lambda p: str(p), reverse=True)
             if local:
                 java_exe = str(local[0])
                 try:
@@ -973,7 +986,6 @@ class ServerManager:
                         return str(java_exe)
                 except:
                     continue
-            # Si no encontramos la versión exacta, devolver la primera
             if required_version is None:
                 return str(candidates[0])
 
@@ -1049,12 +1061,14 @@ class ServerManager:
         if progress_cb:
             progress_cb("Extrayendo Java...")
 
-        if JRE_DIR.exists():
-            shutil.rmtree(JRE_DIR)
-        JRE_DIR.mkdir()
+        JRE_DIR.mkdir(exist_ok=True)
+        version_dir = JRE_DIR / f"java-{version}"
+        if version_dir.exists():
+            shutil.rmtree(version_dir)
+        version_dir.mkdir()
 
         with zipfile.ZipFile(zip_path, "r") as zf:
-            _safe_extract(zf, JRE_DIR)
+            _safe_extract(zf, version_dir)
 
         zip_path.unlink()
         self._java_version_needed = None
